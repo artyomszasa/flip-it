@@ -56,6 +56,8 @@ const scoreRepository = new Repo('token');
 app.use(cors());
 app.use(express.json());
 
+app.use('/assets', express.static('public'));
+
 app.get('/game/:size', (req, resp) => {
     const size = parseInt(req.params.size, 10);
     if (!size || size < 6 || size > 20 || size % 2 !== 0) {
