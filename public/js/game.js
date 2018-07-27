@@ -86,12 +86,13 @@ startButton.addEventListener('click', evt => {
             flipped: [],
             startTime: Date.now(),
             token: game.token,
-            name: config.name
+            name: config.name,
+            deck: null
         };
         clearDeck(deckElement);
-        const deck = game.pictures
+        window.game.deck = game.pictures
             .map(value => new Card(value));
-        deck.forEach(card => deckElement.appendChild(card.render()));
+        window.game.deck.forEach(card => deckElement.appendChild(card.render()));
     });
 });
 [nameField, sizeField, startButton].forEach(el => deckElement.appendChild(el));
@@ -105,6 +106,7 @@ document.body.addEventListener('flip', (evt) => {
     const card = evt.detail.card;
     game.flipped.push(card);
     if (game.flipped.length === 2) {
+        game.deck.forEach(card => card.lock());
         window.setTimeout(() => {
             if (game.flipped.every(card => card.value === game.flipped[0].value)) {
                 game.flipped.forEach(card => card.remove());
@@ -112,7 +114,7 @@ document.body.addEventListener('flip', (evt) => {
                 game.flipped.forEach(card => card.unflip());
             }
             game.flipped = [];
-
+            game.deck.forEach(card => card.unlock());
             if (deckElement.querySelectorAll('.card').length === 0) {
                 end({
                     steps: game.flips / 2,

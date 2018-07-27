@@ -1,10 +1,30 @@
 'use strict';
 
 class Card {
+
+    /**
+     * Create Card
+     * @param {string} value
+     */
     constructor (value) {
+        /**
+         * Backface
+         */
         this.placeholder = 'X';
+        /**
+         * Front
+         */
         this.value = value;
+        /**
+         * Card locked
+         */
+        this.locked = false;
     }
+
+    /**
+     * Render Card DOM
+     * @returns {HTMLElement} - Card HTMLElement
+     */
     render () {
         const card = document.createElement('button');
         card.className = 'card';
@@ -13,22 +33,50 @@ class Card {
         this.element = card;
         return card;
     }
+
+    /**
+     * Flip card
+     * @param {Object} evt
+     */
     flip (evt) {
         const button = evt.target.closest('button');
+        if (this.locked || button.textContent === this.value) {
+            return;
+        }
         const flipEvent = new CustomEvent('flip', {
             detail: {
                 card: this
             }
         });
-        if (button.textContent !== this.value) {
-            button.textContent = this.value;
-            document.body.dispatchEvent(flipEvent);
-        }
+        button.textContent = this.value;
+        document.body.dispatchEvent(flipEvent);
     }
+
+    /**
+     * Replace Card with an invisible placeholder
+     */
     remove () {
         this.element.className = 'card-placeholder'
     }
+
+    /**
+     * Unflip card
+     */
     unflip () {
         this.element.textContent = this.placeholder;
+    }
+
+    /**
+     * Locks card
+     */
+    lock () {
+        this.locked = true;
+    }
+
+    /**
+     * Unlocks card
+     */
+    unlock () {
+        this.locked = false;
     }
 }
