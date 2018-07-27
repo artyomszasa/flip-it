@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Starts the game
  * @param {Object} config - Sets the number of cards, with the size property.

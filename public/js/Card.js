@@ -1,3 +1,5 @@
+'use strict';
+
 class Card {
     constructor (value) {
         this.placeholder = 'X';
