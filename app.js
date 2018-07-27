@@ -64,7 +64,7 @@ app.get('/game/:size', (req, resp) => {
         const cardSource = cards.slice(0);
         const pictures = [];
         while (pictures.length < size) {
-            const c = cardSource[random.range(cardSource.length)];
+            const c = cardSource.splice(random.range(cardSource.length), 1)[0];
             pictures.push(c, c);
         }
         shuffle(pictures);
