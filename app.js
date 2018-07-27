@@ -4,6 +4,7 @@ const express = require('express'),
     random = require('random-seed').create(),
     shuffle = require('shuffle-array'),
     Repo = require('./in-memory-repository'),
+    // Repo = require('./mongo-repository'),
     pug = require('pug');
 
 // **************************************************************************
@@ -92,6 +93,9 @@ app.get('/game/:size', (req, resp) => {
                 pictures: game.pictures
             };
             resp.send(gameDto);
+        }, err => {
+            console.error(err);
+            resp.sendStatus(500);
         });
     }
 });
@@ -111,7 +115,10 @@ app.post('/score', (req, resp) => {
         if (!id) {
             resp.sendStatus(400);
         } else {
-            scoreRepository.upsert(Object.assign({}, scoreReq)).then(() => resp.sendStatus(200));
+            scoreRepository.upsert(Object.assign({}, scoreReq)).then(() => resp.sendStatus(200), err => {
+                console.error(err);
+                resp.sendStatus(500);
+            });
         }
     }
 });
@@ -126,6 +133,9 @@ app.get('/score', (req, resp) => {
                 name: score.name
             };
         }));
+    }, err => {
+        console.error(err);
+        resp.sendStatus(500);
     });
 });
 

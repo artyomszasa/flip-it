@@ -1,6 +1,10 @@
+//NOTE: requires "mongodb": "^3.1.1" in dependencies!
+
 const MongoClient = require('mongodb').MongoClient;
 
-const uri = "mongodb://localhost:27017" || process.env.MONGODB_URI;
+const uri = "mongodb://127.0.0.1:27017" || process.env.MONGODB_URI;
+
+const dbName = 'flip-it' || process.env.MONGODB_DATABASE;
 
 module.exports = class {
     constructor (idProperty, name) {
@@ -26,7 +30,7 @@ module.exports = class {
                 if (err) {
                     reject(err);
                 } else {
-                    const collection = client.db(this.__name);
+                    const collection = client.db(dbName).collection(this.__name);
                     collection.find({}).toArray((err, docs) => err ? reject(err) : resolve(docs.map(this.__toDto)));
                 }
             });
@@ -38,7 +42,7 @@ module.exports = class {
                 if (err) {
                     reject(err);
                 } else {
-                    const collection = client.db(this.__name);
+                    const collection = client.db(dbName).collection(this.__name);
                     collection.findOne({ _id: id }, (err, doc) => err ? reject(err) : resolve(this.__toDto(doc)));
                 }
             });
@@ -51,8 +55,14 @@ module.exports = class {
                 if (err) {
                     reject(err);
                 } else {
-                    const collection = client.db(this.__name);
-                    collection.updateOne({ _id: entry._id }, entry, (err, _) => err ? reject(err) : resolve());
+                    const collection = client.db(dbName).collection(this.__name);
+                    collection.findOne({ _id: entry._id }, (err, e) => {
+                        if (err || !e) {
+                            collection.insertOne(entry, err => err ? reject(err) : resolve());
+                        } else {
+                            collection.updateOne({ _id: entry._id }, entry, err => err ? reject(err) : resolve());
+                        }
+                    });
                 }
             });
         });
