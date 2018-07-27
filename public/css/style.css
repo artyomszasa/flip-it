@@ -43,10 +43,17 @@ body {
     pointer-events: none;
     background: transparent;
 }
-p {
+p, ul {
     margin: 2rem 0;
     font-size: 2rem;
     text-align: center;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+li {
+    margin-bottom: 1rem;
 }
 input {
     margin: 0 1rem 0 0;

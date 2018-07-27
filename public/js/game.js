@@ -122,7 +122,17 @@ document.body.addEventListener('flip', (evt) => {
                 }).then(response => {
                     clearDeck(deckElement);
                     const msg = response.win ? 'You won!' : 'Error!';
-                    deckElement.innerHTML = `<p>${msg}</p>`;
+                    fetch('/score')
+                        .then(response => response.ok ? response.json() : { err: 'Err' })
+                        .then(response => {
+                            deckElement.innerHTML = `
+                                <p>${msg}</p>
+                                <p><strong>Best scores:</strong></p>
+                                <ul>
+                                    ${response.map(score => `<li><strong>${score.name}</strong><br>${score.seconds} seconds, ${score.steps} steps</li>`).join('')}
+                                </ul>
+                            `;
+                        });
                 });
             }
         }, 1000);
