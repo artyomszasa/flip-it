@@ -3,7 +3,8 @@ const express = require('express'),
     cors = require('cors'),
     random = require('random-seed').create(),
     shuffle = require('shuffle-array'),
-    Repo = require('./in-memory-repository');
+    Repo = require('./in-memory-repository'),
+    pug = require('pug');
 
 // **************************************************************************
 // cards
@@ -57,6 +58,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/assets', express.static('public'));
+app.set('view engine', 'pug')
 
 app.get('/game/:size', (req, resp) => {
     const size = parseInt(req.params.size, 10);
@@ -114,6 +116,10 @@ app.get('/score', (req, resp) => {
             name: score.name
         };
     }));
+});
+
+app.get('/', (req, res) => {
+    res.render('index');
 });
 
 app.listen(process.env.PORT || 80);
