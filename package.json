@@ -1,0 +1,10 @@
+{
+    "name": "flip-it",
+    "version": "0.0.1",
+    "dependencies": {
+        "cors": "^2.8.4",
+        "express": "4.16.3",
+        "random-seed": "0.3.0",
+        "shuffle-array": "^1.0.1"
+    }
+}
