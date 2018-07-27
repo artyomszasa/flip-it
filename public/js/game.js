@@ -39,3 +39,40 @@ function end (stats) {
         }
     })
 }
+
+/**
+ * Clears the game area.
+ * @param {HTMLElement} deckElement - Game area
+ */
+function clearDeck (deckElement) {
+    deckElement.innerHTML = '';
+}
+
+const deckElement = document.getElementById('deck');
+
+/**
+ * Start button
+ */
+const startButton = document.createElement('button');
+startButton.className = 'start';
+startButton.textContent = 'Start Game';
+startButton.addEventListener('click', evt => {
+    start({ size: 20 }).then(game => {
+        if (game.err) {
+            console.log(game.err);
+            return;
+        }
+        window.game = {
+            flips: 0,
+            flipped: [],
+            startTime: Date.now(),
+            token: game.token,
+            name: 'Marci'
+        };
+        clearDeck(deckElement);
+        const deck = game.pictures
+            .map(value => new Card(value));
+        deck.forEach(card => deckElement.appendChild(card.render()));
+    });
+});
+deckElement.appendChild(startButton);
