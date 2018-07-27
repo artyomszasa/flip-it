@@ -60,13 +60,23 @@ function clearDeck (deckElement) {
 const deckElement = document.getElementById('deck');
 
 /**
- * Start button
+ * Start view
  */
 const startButton = document.createElement('button');
+const nameField = document.createElement('input');
+const sizeField = document.createElement('input');
+nameField.setAttribute('name', 'name');
+sizeField.setAttribute('name', 'size');
+nameField.setAttribute('placeholder', 'Name');
+sizeField.setAttribute('placeholder', 'Size');
 startButton.className = 'start';
 startButton.textContent = 'Start Game';
 startButton.addEventListener('click', evt => {
-    start({ size: 20 }).then(game => {
+    const config = {
+        size: sizeField.value,
+        name: nameField.value
+    };
+    start(config).then(game => {
         if (game.err) {
             console.log(game.err);
             return;
@@ -76,7 +86,7 @@ startButton.addEventListener('click', evt => {
             flipped: [],
             startTime: Date.now(),
             token: game.token,
-            name: 'Marci'
+            name: config.name
         };
         clearDeck(deckElement);
         const deck = game.pictures
@@ -84,7 +94,7 @@ startButton.addEventListener('click', evt => {
         deck.forEach(card => deckElement.appendChild(card.render()));
     });
 });
-deckElement.appendChild(startButton);
+[nameField, sizeField, startButton].forEach(el => deckElement.appendChild(el));
 
 /**
  * Handle flips
@@ -111,7 +121,7 @@ document.body.addEventListener('flip', (evt) => {
                     name: game.name
                 }).then(response => {
                     clearDeck(deckElement);
-                    const msg = response.win ? 'Nyertél!' : 'Hiba!';
+                    const msg = response.win ? 'You won!' : 'Error!';
                     deckElement.innerHTML = `<p>${msg}</p>`;
                 });
             }
