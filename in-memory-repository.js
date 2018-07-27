@@ -3,7 +3,10 @@ module.exports = class {
         this.__data = {};
         this.__idProperty = idProperty || 'id';
     }
-    get items () { return Object.values(this.__data); }
-    lookup (id) { return this.__data[id]; }
-    upsert (item) { return this.__data[item[this.__idProperty]] = item; }
+    get items () { return Promise.resolve(Object.values(this.__data)); }
+    lookup (id) { return Promise.resolve(this.__data[id] || null); }
+    upsert (item) {
+        this.__data[item[this.__idProperty]] = item;
+        return Promise.resolve();
+    }
 };

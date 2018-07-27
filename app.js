@@ -43,9 +43,19 @@ const Token = (function () {
 
 // dummy (for code completion)
 class Repository {
-    /** @type Array */
+    /** @type Promise<Array> */
     get items () { throw new Error('not implemented'); }
+    /**
+     * Lookup item by id.
+     * @param {String|Number} id
+     * @return {Promise<Object>} - Either object with the requested id, or null;
+     */
     lookup (id) { throw new Error('not implemented'); }
+    /**
+     * Insert or update object in the repository.
+     * @param {Object} item
+     * @return {Promise} - promise that is resolved once operation has finished.
+     */
     upsert (item) { throw new Error('not implemented'); }
 }
 
@@ -76,12 +86,13 @@ app.get('/game/:size', (req, resp) => {
             id: Token.create(),
             pictures: pictures
         };
-        gameRepository.upsert(game);
-        const gameDto = {
-            token: Token.encrypt(game.id),
-            pictures: game.pictures
-        };
-        resp.send(gameDto);
+        gameRepository.upsert(game).then(() => {
+            const gameDto = {
+                token: Token.encrypt(game.id),
+                pictures: game.pictures
+            };
+            resp.send(gameDto);
+        });
     }
 });
 
@@ -100,22 +111,22 @@ app.post('/score', (req, resp) => {
         if (!id) {
             resp.sendStatus(400);
         } else {
-            scoreRepository.upsert(Object.assign({}, scoreReq));
-            resp.sendStatus(200);
+            scoreRepository.upsert(Object.assign({}, scoreReq)).then(() => resp.sendStatus(200));
         }
     }
 });
 
 app.get('/score', (req, resp) => {
-    const scores = scoreRepository.items;
-    scores.sort((a, b) => a.seconds > b.seconds ? -1 : a.seconds > b.seconds ? 1 : 0);
-    resp.send(scores.map(score => {
-        return {
-            seconds: score.seconds,
-            steps: score.steps,
-            name: score.name
-        };
-    }));
+    scoreRepository.items.then(scores => {
+        scores.sort((a, b) => a.seconds > b.seconds ? -1 : a.seconds > b.seconds ? 1 : 0);
+        resp.send(scores.map(score => {
+            return {
+                seconds: score.seconds,
+                steps: score.steps,
+                name: score.name
+            };
+        }));
+    });
 });
 
 app.get('/', (req, res) => {
