@@ -58,6 +58,8 @@ Repository must implmenent following propertyies/methods:
 
 Furthermore constructor must accept optional parameter defining property name that contains id value of the item. If none specified property name must be assumed to be `id`.
 
+See `mongo-repository.js` for example.
+
 
 
 

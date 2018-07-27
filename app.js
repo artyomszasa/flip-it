@@ -60,15 +60,15 @@ class Repository {
 }
 
 /** @type Repository */
-const gameRepository = new Repo();
+const gameRepository = new Repo(null, 'game');
 /** @type Repository */
-const scoreRepository = new Repo('token');
+const scoreRepository = new Repo('token', 'score');
 
 app.use(cors());
 app.use(express.json());
 
 app.use('/assets', express.static('public'));
-app.set('view engine', 'pug')
+app.set('view engine', 'pug');
 
 app.get('/game/:size', (req, resp) => {
     const size = parseInt(req.params.size, 10);
